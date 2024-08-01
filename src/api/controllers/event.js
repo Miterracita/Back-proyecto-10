@@ -45,7 +45,7 @@ const postEvents = async (req, res, next) => {
         const newEvent = new Event(req.body);
 
 		if (req.file) {
-            newEvent.img = req.file.path //para publicar una sóla imagen
+            newEvent.img = req.file?.path //para publicar una sóla imagen
 
         }
 
