@@ -27,5 +27,5 @@ app.use("*", (req, res, next) => {
 })
 
 app.listen(3000, () => {
-    console.log("El servidor está funcionando en http://localhost:3001");
+    console.log("El servidor está funcionando en http://localhost:3000");
 })
