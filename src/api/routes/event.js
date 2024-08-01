@@ -1,4 +1,5 @@
 const { isAuth } = require("../../middlewares/auth");
+const upload = require('../../middlewares/file')
 const { getEvents, getEventById, postEvents, postEventsConfirmation, getEventAsistentes } = require("../controllers/event");
 const eventRoutes = require("express").Router();
 
