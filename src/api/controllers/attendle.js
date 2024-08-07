@@ -1,5 +1,6 @@
 const Attendle = require("../models/Attendle");
 const User = require("../models/User");
+const Event = require('../models/Event');
 
 //consultar todos los asistentes registrados
 const getAttendle = async (req, res, next) => {
@@ -45,16 +46,38 @@ const getUserAttendle = async (req, res, next) => {
           return res.status(400).json({ error: 'ID de evento inválido.' });
       }
 
-      const user = await User.findOne({ '_id': userId, 'asistente': eventId });
+      // Buscar el evento por su ID y poblar el campo `user` con los detalles de los usuarios
+      const event = await Event.findById(eventId).populate('user', 'userName email');
 
-      if (!user) {
-          return res.status(200).json({ asistenciaConfirmada: false });
+      if (!event) {
+          return res.status(404).json({ error: 'Evento no encontrado.' });
       }
 
-      res.status(200).json({ asistenciaConfirmada: true });
+      // Comprobar si el ID del usuario está en la lista de asistentes
+      const isUserAttending = event.user.some(user => user._id.toString() === userId);
+
+      if (isUserAttending) {
+        return res.status(200).json({
+            attendees: event.user,
+            message: 'Ya has confirmado tu asistencia a este evento.'
+        });
+      }
+
+      // Si el usuario no está en la lista, confirmar la asistencia
+      event.user.push(userId);
+      await event.save();
+
+      // Buscar los detalles del usuario
+      const user = await User.findById(userId).select('userName email');
+
+      res.status(200).json({
+          attendees: event.user,
+          message: `Asistencia confirmada para ${user ? user.userName : 'usuario'}.`
+      });
+
   } catch (error) {
-      console.error('Error al verificar asistencia del usuario:', error);
-      res.status(500).json({ error: 'Error al verificar asistencia del usuario.' });
+    console.error('Error al obtener asistentes:', error);
+    res.status(500).json({ error: 'Error al obtener asistentes.' });
   }
 }
 
