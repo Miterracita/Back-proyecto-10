@@ -8,6 +8,6 @@ eventRoutes.get("/:id", getEventById);
 eventRoutes.post("/nuevoEvento", [isAuth], upload.single('img'), postEvents);
 
 eventRoutes.post("/:eventId/confirmarAsistencia", [isAuth], postEventsConfirmation);
-eventRoutes.get("/:eventId/asistentes", [isAuth], getEventAsistentes);
+eventRoutes.get("/:eventId/checkAsistencia", [isAuth], getEventAsistentes);
 
 module.exports = eventRoutes;
