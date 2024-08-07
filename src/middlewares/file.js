@@ -10,13 +10,5 @@ const storage = new CloudinaryStorage({
     }
 });
 
-// const storage = new CloudinaryStorage({
-//     cloudinary: cloudinary,
-//     params: {
-//         folder: "FILES",
-//         allowedFormats: ['jpg', 'png', 'jpeg', 'gif', 'webp'],
-//     }
-// });
-
 const upload = multer ({ storage });
 module.exports = upload ;

@@ -36,6 +36,29 @@ const getAttendleById = async (req, res, next) => {
       }
 }
 
+//comprobar si un usuario x ha confirmado asistencia a un evento con id x
+const getUserAttendle = async (req, res, next) => {
+  try {
+      const { eventId } = req.params;
+      const userId = req.user.id;
+
+      if (!eventId) {
+          return res.status(400).json({ error: 'ID de evento inválido.' });
+      }
+
+      const user = await User.findOne({ '_id': userId, 'asistente': eventId });
+
+      if (!user) {
+          return res.status(200).json({ asistenciaConfirmada: false });
+      }
+
+      res.status(200).json({ asistenciaConfirmada: true });
+  } catch (error) {
+      console.error('Error al verificar asistencia del usuario:', error);
+      res.status(500).json({ error: 'Error al verificar asistencia del usuario.' });
+  }
+}
+
 // const getAttendleById = async (req, res, next) => {
 //     const id = req.params.id;
 //     try {
@@ -54,4 +77,5 @@ const getAttendleById = async (req, res, next) => {
 module.exports = {
     getAttendle,
     getAttendleById,
+    getUserAttendle,
 }
