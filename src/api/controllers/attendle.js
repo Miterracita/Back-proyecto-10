@@ -13,7 +13,6 @@ const getAttendle = async (req, res, next) => {
 
 
 // consultar listado de asistentes de un evento con determinado id
-
 const getAttendleById = async (req, res, next) => {
     try {
         // const { eventId } = req.body;
