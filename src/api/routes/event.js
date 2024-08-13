@@ -5,7 +5,7 @@ const eventRoutes = require("express").Router();
 
 eventRoutes.get("/events", getEvents);
 eventRoutes.get("/:id", getEventById);
-eventRoutes.get("/eventList", getEventByName);
+eventRoutes.get("/eventList/:name", getEventByName);
 
 eventRoutes.post("/nuevoEvento", [isAuth], upload.single('img'), postEvents);
 
