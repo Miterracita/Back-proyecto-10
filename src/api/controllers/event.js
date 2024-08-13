@@ -27,17 +27,66 @@ const getEventById = async (req, res, next) => {
 	}
 }
 
-// consultar un evento por su nombre - NO ES NECESARIO
-// const getEventByName = async (req, res, next) => {
-// 	const { name } = req.params;
+// consultar un evento por su nombre
+const getEventByName = async (req, res, next) => {
+	const { name } = req.query;
+	
+	if (!name) {
+        return res.status(400).json({ message: 'El parámetro "name" es requerido' });
+    }
 
-// 	try {
-// 		const eventByName = await Event.find({ name: name });
-// 		return res.status(200).json(eventByName);
-// 	} catch (err) {
-// 		return res.status(500).json(err);
-// 	}
-// }
+	try {
+        // Realizará la búsqueda tanto si lo ponemos en mayúsculas como minúsculas
+		// busca la palabra en cualquier parte del nombre
+		// const eventByName = await Event.find({ name: new RegExp(name, 'i') });
+
+		// Dividir la cadena de búsqueda en palabras individuales
+		const words = name.split(' ').filter(word => word);
+
+		console.log(words);
+		
+		// Buscar todas las palabras en cualquier orden
+		const todas = new RegExp(words.map(word => `(?=.*${word})`).join(''), 'i');
+
+		console.log(todas);
+
+		// Buscar eventos que coincidan con todas las palabras
+		const eventsByName = await Event.find({ name: todas });
+
+        // Si no se encuentra ningún evento
+        if (eventsByName.length === 0) {
+            return res.status(404).json({ message: 'No se encontraron eventos que coincidan con la búsqueda' });
+        }
+
+        // Si se encuentra el evento, devolverlo
+        return res.status(200).json(eventsByName);
+    } catch (err) {
+		console.error('Error al obtener el evento:', err);
+        return res.status(500).json({ message: 'Error interno del servidor', error: err.message });
+    }
+}
+
+//consultar todos los eventos ordenados por fecha ascendente
+const getEventByDate = async (req, res, next) => {
+
+	try {
+		// fecha actual
+        const currentDate = new Date();
+
+        // Buscar y ordenar los eventos por fecha de manera ascendente
+        const events = await Event.find({ date: { $gte: currentDate } }).sort({ date: 1 });
+
+        // Si no hay eventos futuros
+        if (events.length === 0) {
+            return res.status(404).json({ message: 'No se encontraron eventos futuros' });
+        }
+
+        return res.status(200).json(events);
+    } catch (err) {
+        console.error('Error al obtener eventos:', err);
+        return res.status(500).json({ message: 'Error interno del servidor', error: err.message });
+    }
+};
 
 //publicar un evento X USUARIOS REGISTRADOS
 const postEvents = async (req, res, next) => {
@@ -174,6 +223,8 @@ const postEventsConfirmation = async (req, res, next) => {
 module.exports = {
     getEvents,
     getEventById,
+	getEventByName,
+	getEventByDate,
 	getEventAsistentes,
     postEvents,
 	postEventsConfirmation
