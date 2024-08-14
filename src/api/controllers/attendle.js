@@ -36,50 +36,50 @@ const getAttendleById = async (req, res, next) => {
       }
 }
 
-//comprobar si un usuario x ha confirmado asistencia a un evento con id x
-const getUserAttendle = async (req, res, next) => {
-  try {
-      const { eventId } = req.params;
-      const userId = req.user.id;
+// //comprobar si un usuario x ha confirmado asistencia a un evento con id x
+// const getUserAttendle = async (req, res, next) => {
+//   try {
+//       const { eventId } = req.params;
+//       const userId = req.user.id;
 
-      if (!eventId) {
-          return res.status(400).json({ error: 'ID de evento inválido.' });
-      }
+//       if (!eventId) {
+//           return res.status(400).json({ error: 'ID de evento inválido.' });
+//       }
 
-      // Buscar el evento por su ID y poblar el campo `user` con los detalles de los usuarios
-      const event = await Event.findById(eventId).populate('user', 'userName email');
+//       // Buscar el evento por su ID y poblar el campo `user` con los detalles de los usuarios
+//       const event = await Event.findById(eventId).populate('user', 'userName email');
 
-      if (!event) {
-          return res.status(404).json({ error: 'Evento no encontrado.' });
-      }
+//       if (!event) {
+//           return res.status(404).json({ error: 'Evento no encontrado.' });
+//       }
 
-      // Comprobar si el ID del usuario está en la lista de asistentes
-      const isUserAttending = event.user.some(user => user._id.toString() === userId);
+//       // Comprobar si el ID del usuario está en la lista de asistentes
+//       const isUserAttending = event.user.some(user => user._id.toString() === userId);
 
-      if (isUserAttending) {
-        return res.status(200).json({
-            attendees: event.user,
-            message: 'Ya has confirmado tu asistencia a este evento.'
-        });
-      }
+//       if (isUserAttending) {
+//         return res.status(200).json({
+//             attendees: event.user,
+//             message: 'Ya has confirmado tu asistencia a este evento.'
+//         });
+//       }
 
-      // Si el usuario no está en la lista, confirmar la asistencia
-      event.user.push(userId);
-      await event.save();
+//       // Si el usuario no está en la lista, confirmar la asistencia
+//       event.user.push(userId);
+//       await event.save();
 
-      // Buscar los detalles del usuario
-      const user = await User.findById(userId).select('userName email');
+//       // Buscar los detalles del usuario
+//       const user = await User.findById(userId).select('userName email');
 
-      res.status(200).json({
-          attendees: event.user,
-          message: `Asistencia confirmada para ${user ? user.userName : 'usuario'}.`
-      });
+//       res.status(200).json({
+//           attendees: event.user,
+//           message: `Asistencia confirmada para ${user ? user.userName : 'usuario'}.`
+//       });
 
-  } catch (error) {
-    console.error('Error al obtener asistentes:', error);
-    res.status(500).json({ error: 'Error al obtener asistentes.' });
-  }
-}
+//   } catch (error) {
+//     console.error('Error al obtener asistentes:', error);
+//     res.status(500).json({ error: 'Error al obtener asistentes.' });
+//   }
+// }
 
 // const getAttendleById = async (req, res, next) => {
 //     const id = req.params.id;
@@ -99,5 +99,5 @@ const getUserAttendle = async (req, res, next) => {
 module.exports = {
     getAttendle,
     getAttendleById,
-    getUserAttendle,
+    // getUserAttendle,
 }

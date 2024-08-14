@@ -72,63 +72,109 @@ const postEvents = async (req, res, next) => {
     }
 }
 
-// confirmar asistencia a un evento
+// // confirmar asistencia a un evento
+// const postEventsConfirmation = async (req, res, next) => {
+// 	try {
+// 	  const { eventId } = req.params;
+// 	  const userId = req.user._id;
+
+// 		// Validar que eventId y userId sean válidos
+// 		if (!eventId || !userId) {
+// 			return res.status(400).json({ error: 'ID de evento o ID de usuario inválidos.' });
+// 		}
+
+// 	  // Buscar al usuario por su ID y actualizar el campo 'asistente' con el ID del evento
+// 	  const user = await User.findByIdAndUpdate(
+// 		userId,
+// 		{ $addToSet: { asistente: eventId } },
+// 		{ new: true }
+// 	  );
+  
+// 	  if (!user) {
+// 		return res.status(404).json({ error: 'Usuario no encontrado.' });
+// 	  }
+  
+// 	  // Añadir el usuario al evento
+// 		const event = await Event.findByIdAndUpdate(
+// 			eventId,
+// 			{ $addToSet: { user: userId } },
+// 			{ new: true }
+// 		);
+	  
+// 		if (!event) {
+// 			return res.status(404).json({ error: 'Evento no encontrado.' });
+// 		}
+		  
+// 	  // Crear o actualizar la colección Attendle
+// 	  let attendle = await Attendle.findOne({ user: userId });
+// 	  if (attendle) {
+// 		// Si ya existe, actualizar
+// 		attendle.events.addToSet(eventId);
+// 	  } else {
+// 		// Si no existe, crear uno nuevo
+// 		attendle = new Attendle({
+// 		  user: userId,
+// 		  events: [eventId],
+// 		  name: user.userName,
+// 		  email: user.email
+// 		});
+// 	  }
+// 	  await attendle.save();
+  
+// 	  res.status(200).json({ message: 'Asistencia confirmada correctamente.', attendle: attendle });
+
+// 	} catch (error) {
+// 	  console.error('Error al confirmar asistencia:', error);
+// 	  res.status(500).json({ error: 'Error al confirmar asistencia.' });
+// 	}
+//   };
+
 const postEventsConfirmation = async (req, res, next) => {
 	try {
 	  const { eventId } = req.params;
 	  const userId = req.user._id;
-
-		// Validar que eventId y userId sean válidos
-		if (!eventId || !userId) {
-			return res.status(400).json({ error: 'ID de evento o ID de usuario inválidos.' });
-		}
-
-	  // Buscar al usuario por su ID y actualizar el campo 'asistente' con el ID del evento
-	  const user = await User.findByIdAndUpdate(
-		userId,
-		{ $addToSet: { asistente: eventId } },
-		{ new: true }
+  
+	  // Validar que eventId y userId sean válidos
+	  if (!eventId || !userId) {
+		return res.status(400).json({ error: 'ID de evento o ID de usuario inválidos.' });
+	  }
+  
+	  // Buscar el usuario y actualizar la lista de eventos
+	  const [user, event] = await Promise.all([
+		User.findByIdAndUpdate(
+		  userId,
+		  { $addToSet: { asistente: eventId } },
+		  { new: true }
+		),
+		Event.findByIdAndUpdate(
+		  eventId,
+		  { $addToSet: { user: userId } },
+		  { new: true }
+		)
+	  ]);
+  
+	  if (!user || !event) {
+		return res.status(404).json({ error: 'Usuario o evento no encontrado.' });
+	  }
+  
+	  // Crear o actualizar el documento Attendle
+	  let attendle = await Attendle.findOneAndUpdate(
+		{ user: userId },
+		{ $addToSet: { events: eventId }, name: user.userName, email: user.email },
+		{ new: true, upsert: true }
 	  );
   
-	  if (!user) {
-		return res.status(404).json({ error: 'Usuario no encontrado.' });
-	  }
+	  res.status(200).json({
+		message: 'Asistencia confirmada correctamente.',
+		attendle
+	  });
   
-	  // Añadir el usuario al evento
-		const event = await Event.findByIdAndUpdate(
-			eventId,
-			{ $addToSet: { user: userId } },
-			{ new: true }
-		);
-	  
-		if (!event) {
-			return res.status(404).json({ error: 'Evento no encontrado.' });
-		}
-		  
-	  // Crear o actualizar la colección Attendle
-	  let attendle = await Attendle.findOne({ user: userId });
-	  if (attendle) {
-		// Si ya existe, actualizar
-		attendle.events.addToSet(eventId);
-	  } else {
-		// Si no existe, crear uno nuevo
-		attendle = new Attendle({
-		  user: userId,
-		  events: [eventId],
-		  name: user.userName,
-		  email: user.email
-		});
-	  }
-	  await attendle.save();
-  
-	  res.status(200).json({ message: 'Asistencia confirmada correctamente.', attendle: attendle });
-
 	} catch (error) {
 	  console.error('Error al confirmar asistencia:', error);
 	  res.status(500).json({ error: 'Error al confirmar asistencia.' });
 	}
   };
-
+  
   //mostrar los usuarios confirmados a un evento con determinado id
 	const getEventAsistentes = async (req, res) => {
 		try {
