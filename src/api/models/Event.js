@@ -8,7 +8,9 @@ const eventSchema = new mongoose.Schema(
     img: { type: String, required: false, default: "https://res.cloudinary.com/dq2daoeex/image/upload/v1723579439/API-Rest-FILES/imagen_por_defecto_dldpud.jpg" },
     location: { type: String, trim: true, required: false },
     description: { type: String, trim: true, required: false },
-    user: [{ type: mongoose.Schema.Types.ObjectId, ref: "users", required: false }]
+    //este campo es la lista de usuarios que han confirmados asistencia al evento
+    asistentes: [{ type: mongoose.Schema.Types.ObjectId, ref: "users", required: false }]
+
   },
   {
     timestamps: true,
