@@ -191,14 +191,14 @@ const postEventsConfirmation = async (req, res, next) => {
 			}
 		
 			// Buscar el evento por su ID y poblar el campo `user` con los detalles de los usuarios
-			const event = await Event.findById(eventId).populate('user', 'userName email');
+			const event = await Event.findById(eventId).populate('asistentes', 'userName email');
 		
 			if (!event) {
 				return res.status(404).json({ error: 'Evento no encontrado.' });
 			}
 		
 			// Devolver la lista de usuarios confirmados
-			res.status(200).json(event.user);
+			res.status(200).json(event.asistentes);
 
 		} catch (error) {
 			console.error('Error al obtener asistentes:', error);
