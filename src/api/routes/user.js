@@ -7,7 +7,4 @@ userRoutes.post("/login", login);
 userRoutes.get("/allUsers", getUsers);
 userRoutes.get("/:id", getUserById);
 
-// userRoutes.post("/confirmarAsistencia", [isAuth], postEventsConfirmation);
-
-
 module.exports = userRoutes;

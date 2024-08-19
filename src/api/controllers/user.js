@@ -91,32 +91,3 @@ module.exports = {
   getUsers,
   getUserById,
 };
-
-
-//actualizar un usuario (por ID) - NO ES NECESARIO
-// const updateUser = async (req, res, next) => {
-//   try {
-//       const { id } = req.params;
-//       const newUsuario = new User(req.body);
-//       newUsuario._id = id;
-
-//       const userActualizado = await User.findByIdAndUpdate(id, newUsuario, { new: true, });
-//       return res.status(201).json(userActualizado);
-
-//   } catch (error){
-//       return res.status(400).json("error al actualizar el usuario");
-//   }
-// }
-
-//NO ES NECESARIO
-// const deleteUser = async (req, res, next) => {
-//   try {    
-//     const { id } = req.params;
-//     const userDeleted = await User.findByIdAndDelete(id);
-
-//     return res.status(200).json(`El usuario ${userDeleted.userName} se ha eliminado correctamente`);
-
-//   } catch (error){
-//     return res.status(400).json("error al eliminar el usuario");
-//   }
-// }
