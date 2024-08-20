@@ -13,12 +13,13 @@ const registro = async (req, res, next) => {
 
     //comprobamos si un nombre de usuario ya existe
     const userDuplicated = await User.findOne ({
-      userName: req.body.userName
+      userName: req.body.userName,
+      email: req.body.email
     });
 
     //si un usuario ya existe nos salta un mensaje de aviso y no crea el nuevo usuario
     if (userDuplicated) {
-      return res.status(400).json("Ese nombre de usuario ya existe");
+      return res.status(400).json("El nombre de usuario o email ya existe");
     }
     
     const userSaved = await newUser.save();
@@ -45,6 +46,7 @@ const login = async (req, res, next) => {
       
       //lo que pasa cuando te logueas con jsonwebtoken
       const token = generateSing(user._id);
+
       // return res.status(200).json(`Te has logueado como usuario ${user.userName} rol: ${user.rol} y token: ${token}`);
       return res.status(200).json({ token, user })
     
