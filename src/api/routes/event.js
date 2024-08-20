@@ -5,12 +5,12 @@ const eventRoutes = require("express").Router();
 
 eventRoutes.get("/events", getEvents);
 eventRoutes.get("/:id", getEventById);
-eventRoutes.get("/eventList/:name", getEventByName);
+eventRoutes.get("/:name", getEventByName);
 eventRoutes.get("/:eventId/asistentes", [isAuth], getEventAsistentes);
 
 eventRoutes.post("/nuevoEvento", [isAuth], upload.single('img'), postEvents);
 eventRoutes.post("/:eventId/confirmarAsistencia", [isAuth], postEventsConfirmation);
 
-eventRoutes.get("/:eventId/borrar", [isAdmin], deleteEvent);
+eventRoutes.delete("/:eventId/borrar", [isAdmin], deleteEvent);
 
 module.exports = eventRoutes;
