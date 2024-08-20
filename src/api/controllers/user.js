@@ -86,10 +86,29 @@ const getUserById = async (req, res, next) => {
 	}
 }
 
+const verifyToken = async (req, res, next) => {
+  const token = req.headers['authorization']?.split(' ')[1]; // "Bearer TOKEN"
+
+    if (!token) {
+        return res.status(401).json({ success: false, message: 'Token no proporcionado' });
+    }
+
+    // Verificar el token
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ success: false, message: 'Token inválido o expirado' });
+        }
+
+        // Si el token es válido, opcionalmente puedes adjuntar la información del usuario al request
+        req.user = decoded;
+        res.json({ success: true, message: 'Token válido', user: decoded });
+    });
+}
 
 module.exports = { 
   registro,
   login,
+  verifyToken,
   getUsers,
   getUserById,
 };
