@@ -60,17 +60,34 @@ const getEventByName = async (req, res, next) => {
 //publicar un evento X USUARIOS REGISTRADOS
 const postEvents = async (req, res, next) => {
     try {
-        const newEvent = new Event(req.body);
+    //     const newEvent = new Event(req.body);
 
-		if (req.file) {//para publicar una sóla imagen
-            newEvent.img = req.file?.path
-        }
+	// 	if (req.file) {//para publicar una sóla imagen
+    //         newEvent.img = req.file?.path
+    //     }
 
-        const EventGuardado = await newEvent.save();
-        return res.status(201).json(EventGuardado);
-    } catch (error){
-        return res.status(400).json("Error al publicar el evento");
-    }
+    //     const EventGuardado = await newEvent.save();
+    //     return res.status(201).json(EventGuardado);
+
+	const { name, description, date, time, location } = req.body;
+
+	const newEvent = new Event({
+		name,
+		description,
+		date,
+		time,
+		location,
+		img: req.file ? req.file.path : null // Guardar la URL de la imagen si existe
+	});
+
+	const EventGuardado = await newEvent.save();
+	return res.status(201).json(EventGuardado);
+
+	} catch (error) {
+
+	console.error("Error al publicar el evento:", error);
+	return res.status(500).json({ message: "Error al publicar el evento", error: error.message });
+	}
 }
 
 const postEventsConfirmation = async (req, res, next) => {
