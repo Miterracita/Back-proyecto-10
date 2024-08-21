@@ -77,9 +77,10 @@ const postEvents = async (req, res, next) => {
 		date,
 		time,
 		location,
-		img: req.file ? req.file.path : null // Guardar la URL de la imagen si existe
+		img: req.file ? req.file.path : "https://res.cloudinary.com/dq2daoeex/image/upload/v1723579439/API-Rest-FILES/imagen_por_defecto_dldpud.jpg",
+		// Asignar la URL de la imagen por defecto si no se sube una imagen
 	});
-
+	
 	const EventGuardado = await newEvent.save();
 	return res.status(201).json(EventGuardado);
 
