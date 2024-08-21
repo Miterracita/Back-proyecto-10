@@ -11,6 +11,6 @@ eventRoutes.get("/:eventId/asistentes", [isAuth], getEventAsistentes);
 eventRoutes.post("/nuevoEvento", [isAuth], upload.single('img'), postEvents);
 eventRoutes.post("/:eventId/confirmarAsistencia", [isAuth], postEventsConfirmation);
 
-eventRoutes.delete("/:eventId/borrar", [isAuth], deleteEvent);
+eventRoutes.delete("/:eventId/borrar", [isAdmin], deleteEvent);
 
 module.exports = eventRoutes;

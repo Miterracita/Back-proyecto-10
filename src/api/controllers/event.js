@@ -155,11 +155,17 @@ const deleteEvent = async (req, res, next) => {
         const { id } = req.params;
         const eventDelete = await Event.findByIdAndDelete(id);
 
-			deleteFile(eventDelete.img);
+		if (!eventDelete) {
+            return res.status(404).json({ message: "Evento no encontrado" });
+        }
 
-        return res.status(200).json(eventDelete);
-    } catch (error){
-        return res.status(400).json("error");
+        // Eliminar el archivo asociado al evento
+        deleteFile(eventDelete.img);
+        return res.status(200).json({ message: "Evento eliminado correctamente", event: eventDelete });
+
+    } catch (error) {
+        console.error("Error al eliminar el evento:", error);
+        return res.status(500).json({ message: "Error al eliminar el evento", error: error.message });
     }
 }
 
