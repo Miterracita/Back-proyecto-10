@@ -1,3 +1,4 @@
+const { deleteFile } = require("../../utils/deleteFiles");
 const Event = require("../models/Event");
 const Attendle = require("../models/Attendle");
 const User = require("../models/User");
@@ -152,8 +153,9 @@ const postEventsConfirmation = async (req, res, next) => {
 //borrar un evento
 const deleteEvent = async (req, res, next) => {
     try {
-        const { id } = req.params;
-        const eventDelete = await Event.findByIdAndDelete(id);
+        // const { id } = req.params;
+		const { eventId } = req.params
+        const eventDelete = await Event.findByIdAndDelete(eventId);
 
 		if (!eventDelete) {
             return res.status(404).json({ message: "Evento no encontrado" });
